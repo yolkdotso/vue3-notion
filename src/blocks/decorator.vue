@@ -5,13 +5,14 @@ import { computed, PropType } from "vue"
 
 const props = defineProps({
   content: Object as PropType<string[] | string>,
+  decorators: Object as PropType<string[]>,
   ...defineNotionProps,
 })
 //@ts-ignore
 const { props: blockProps, pass, type, hasPageLinkOptions, pageLinkProps } = useNotionBlock(props)
 
 const text = computed(() => props.content?.[0])
-const decorators = computed(() => props.content?.[1] || [])
+const decorators = computed(() => props.decorators || [])
 const decoratorKey = computed(() => decorators.value?.[0]?.[0])
 const decoratorValue = computed(() => decorators.value?.[0]?.[1])
 const unappliedDecorators = computed(() => {

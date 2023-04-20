@@ -1,6 +1,8 @@
 import { defaultMapImageUrl, defaultMapPageUrl } from "@/lib/utils"
-import { computed, PropType } from "vue"
-import { NotionBlockProps, BlockMap } from "./types"
+import { computed, ComputedRef, PropType } from "vue"
+import { NotionBlockProps, BlockMap, Block } from "./types"
+import { EmojiObject } from "./types"
+import { FileObject } from "./types"
 
 export const defineNotionProps = {
   blockMap: { type: Object as PropType<BlockMap>, required: true },
@@ -17,16 +19,18 @@ export const defineNotionProps = {
   prism: { type: Boolean, default: false },
   katex: { type: Boolean, default: false },
   textLinkTarget: { type: String, default: "_blank" },
+  _block: { type: Object as PropType<ComputedRef<Block>>, required: false },
 }
 
-export const useNotionBlock = (props: Readonly<NotionBlockProps>) => {
-  const block = computed(() => {
+export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps>) => {
+  const block = computed<T>(() => {
     const id = props.contentId || Object.keys(props.blockMap)[0]
-    return props.blockMap[id]
+    return props.blockMap[id] as T
   })
 
   const pass = computed(() => {
     return {
+      _block: block,
       blockMap: props.blockMap,
       contentId: props.contentId,
       contentIndex: props.contentIndex,
@@ -43,6 +47,9 @@ export const useNotionBlock = (props: Readonly<NotionBlockProps>) => {
   })
 
   const f = computed(() => {
+    return {}
+
+
     return {
       block_aspect_ratio: block.value?.value?.format?.block_aspect_ratio,
       block_height: block.value?.value?.format?.block_height || 1,
@@ -54,18 +61,31 @@ export const useNotionBlock = (props: Readonly<NotionBlockProps>) => {
     }
   })
 
-  const format = computed(() => block.value?.value.format)
-  const properties = computed(() => block.value?.value.properties)
+  const format = computed(() => {}) // block.value?.value.format)
+  const properties = computed(() => {}) // block.value?.value.properties)
 
-  const icon = computed(() => format.value?.page_icon)
+  const icon = computed<EmojiObject | FileObject | null>(() => blockContent.value?.icon)
   const width = computed(() => format.value?.block_width)
 
-  const title = computed(() => properties.value?.title)
+  const title = computed(() => {
+    const blk = block.value
+    if (!blk) {
+      return null
+    }
+
+    if (blk.type === 'child_page') {
+      return blk[blk.type].title
+    }
+
+    const text = blk[blk.type]?.text
+    return text ? { text } : text
+  })
+
   const caption = computed(() => properties.value?.caption)
   const description = computed(() => properties.value?.description)
 
   const type = computed(() => {
-    return block.value?.value.type
+    return block.value?.type
   })
 
   const visible = computed(() => {
@@ -76,7 +96,22 @@ export const useNotionBlock = (props: Readonly<NotionBlockProps>) => {
     return props.pageLinkOptions?.component && props.pageLinkOptions?.href
   })
   const parent = computed(() => {
-    return props.blockMap[block.value?.value.parent_id]
+    if (!block.value?.parent || block.value.parent.type === 'workspace') {
+      return null
+    }
+
+    const parent = block.value.parent
+    return props.blockMap[
+      // @ts-ignore
+      parent[parent.type]
+    ]
+  })
+
+  const children = computed(() => {
+    return Object.values(props.blockMap)
+    .filter(
+      (blk) => blk.parent?.type === 'workspace' ? false : blk.parent?.[blk.parent?.type] === block.value?.id
+    ).map(c => c.id)
   })
 
   const isType = (t: string | string[]) => {
@@ -86,8 +121,15 @@ export const useNotionBlock = (props: Readonly<NotionBlockProps>) => {
     return visible.value && type.value === t
   }
 
+  const blockContent = computed(() => {
+    const content = block.value[block.value.type]
+    return content
+  })
+
   const blockColorClass = (suffix = "") => {
-    const blockColor = block.value?.value?.format?.block_color
+    if (!block.value) return null
+
+    const blockColor = blockContent.value.color
     return blockColor ? `notion-${blockColor}${suffix}` : undefined
   }
 
@@ -115,6 +157,8 @@ export const useNotionBlock = (props: Readonly<NotionBlockProps>) => {
     visible,
     hasPageLinkOptions,
     parent,
+    children,
+    blockContent,
 
     isType,
     blockColorClass,

@@ -30,17 +30,19 @@ if (!availableType.includes(type.value)) console.warn(`${type.value.toUpperCase(
 </script>
 
 <template>
-  <div style="width: 100%" v-if="isType('page')">
+  <div style="width: 100%" v-if="isType(['page', 'child_page'])">
     <NotionPage class="notion-page-content" v-bind="pass">
       <slot />
     </NotionPage>
   </div>
-  <NotionHeader v-else-if="isType(['header', 'sub_header', 'sub_sub_header'])" v-bind="pass" />
+  <NotionHeader v-else-if="isType(['heading_1', 'heading_2', 'heading_3'])" v-bind="pass" />
   <NotionBookmark v-else-if="isType('bookmark')" v-bind="pass" />
-  <NotionCallout v-else-if="isType('callout')" v-bind="pass" />
+  <NotionCallout v-else-if="isType('callout')" v-bind="pass">
+    <slot />
+  </NotionCallout>
   <NotionCode v-else-if="isType('code')" v-bind="pass" />
   <NotionEquation v-else-if="isType('equation')" v-bind="pass" />
-  <NotionText v-else-if="isType('text')" v-bind="pass" />
+  <NotionText v-else-if="isType('paragraph')" v-bind="pass" />
   <NotionQuote v-else-if="isType('quote')" v-bind="pass" />
   <NotionTodo v-else-if="isType('to_do')" v-bind="pass" />
   <NotionToggle v-else-if="isType('toggle')" v-bind="pass">
@@ -49,10 +51,10 @@ if (!availableType.includes(type.value)) console.warn(`${type.value.toUpperCase(
   <div v-else-if="isType('column_list')" class="notion-row">
     <slot />
   </div>
-  <NotionColumn v-else-if="isType('column')" :format="format">
+  <NotionColumn v-else-if="isType('column')">
     <slot />
   </NotionColumn>
-  <NotionList v-else-if="isType(['bulleted_list', 'numbered_list'])" v-bind="pass">
+  <NotionList v-else-if="isType(['bulleted_list_item', 'numbered_list_item'])" v-bind="pass">
     <slot />
   </NotionList>
   <NotionFigure v-else-if="isType(['image', 'embed', 'figma', 'video', 'audio', 'drive', 'maps'])" v-bind="pass" />
@@ -63,4 +65,7 @@ if (!availableType.includes(type.value)) console.warn(`${type.value.toUpperCase(
   <NotionSyncPointerBlock v-else-if="isType('transclusion_reference')" v-bind="pass"></NotionSyncPointerBlock>
   <NotionTweet v-else-if="isType('tweet')" v-bind="pass"></NotionTweet>
   <hr v-else-if="isType('divider')" class="notion-hr" />
+  <div v-else>
+    MISSING TYPE: {{ type }}
+  </div>
 </template>

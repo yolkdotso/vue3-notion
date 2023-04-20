@@ -8,7 +8,7 @@ import { computed } from "vue"
 
 const props = defineProps({ ...defineNotionProps })
 //@ts-ignore
-const { pass, block } = useNotionBlock(props)
+const { pass, block, children } = useNotionBlock(props)
 </script>
 
 <script lang="ts">
@@ -20,7 +20,7 @@ export default {
 <template>
   <NotionBlock v-bind="pass" v-if="block">
     <NotionRenderer
-      v-for="(contentId, contentIndex) in block.value.content"
+      v-for="(contentId, contentIndex) in children"
       v-bind="pass"
       :key="contentId"
       :level="pass.level + 1"

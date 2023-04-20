@@ -1,3 +1,4 @@
+import { useNotionBlock } from "./blockable"
 import { Block, BlockMap } from "./types"
 
 // utils from react-notion
@@ -12,8 +13,12 @@ const groupBlockContent = (blockMap: BlockMap) => {
   let index = -1
 
   Object.keys(blockMap).forEach((id) => {
-    blockMap[id].value.content?.forEach((blockId) => {
-      const blockType = blockMap[blockId]?.value?.type
+    // @ts-ignore
+    useNotionBlock({
+      blockMap: blockMap,
+      contentId: id
+    }).children.value.forEach((blockId) => {
+      const blockType = blockMap[blockId]?.type
 
       if (blockType && blockType !== lastType) {
         index++
@@ -47,9 +52,10 @@ export const defaultMapImageUrl = (image = "", block: Block) => {
   )
 
   if (block && !image.includes("/images/page-cover/")) {
-    const table = block.value.parent_table === "space" ? "block" : block.value.parent_table
+    // const table = block.parent_table === "space" ? "block" : block.value.parent_table
+    const table = "block"
     url.searchParams.set("table", table)
-    url.searchParams.set("id", block.value.id)
+    url.searchParams.set("id", block.id)
     url.searchParams.set("cache", "v2")
   }
 

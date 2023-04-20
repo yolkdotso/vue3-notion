@@ -15,6 +15,10 @@ const coverStyle = computed(() => {
   return { objectPosition: `center ${coverPosition}%` }
 })
 const computedFont = computed(() => {
+
+  return { fontFamily: "Lyon-Text, Georgia, ui-serif, serif" }
+
+  // todo: can we get this?
   let font = (block.value.value.format?.page_font as string) || ""
   if (font == "serif") {
     return { fontFamily: "Lyon-Text, Georgia, ui-serif, serif" }
@@ -61,7 +65,7 @@ export default {
   <component
     v-else-if="hasPageLinkOptions"
     class="notion-page-link"
-    v-bind="pageLinkProps(block.value.id)"
+    v-bind="pageLinkProps(block.id)"
     :is="props.pageLinkOptions?.component"
   >
     <div class="notion-page-icon">
@@ -71,7 +75,7 @@ export default {
       <NotionTextRenderer :text="title" v-bind="pass" />
     </div>
   </component>
-  <a v-else class="notion-page-link" :target="props.pageLinkTarget" :href="props.mapPageUrl(block.value.id)">
+  <a v-else class="notion-page-link" :target="props.pageLinkTarget" :href="props.mapPageUrl(block.id)">
     <div class="notion-page-icon">
       <NotionPageIcon v-bind="pass" />
     </div>

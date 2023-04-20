@@ -10,6 +10,9 @@ const alt = computed(() => {
 })
 
 const src = computed(() => {
+  if (block.value.type === 'image') {
+    return block.value.image[block.value.image.type].url
+  }
   return props.mapImageUrl(properties.value?.source[0][0], block.value)
 })
 
