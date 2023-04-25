@@ -186,12 +186,13 @@ onMounted(async () => {
 // const pageId = "25b18655-20ee-436f-a3c2-0ec35716d7f2" // data room
 
   const pageId = route.params.id as string
+  const p = await fetch(`http://yolk-app.test/api/notion?root=${pageId}`).then((res) => res.json())
 
   const { blockMap: result, blockChildrenMap, pageMap, parentMap } =
-  await resolvePage(pageId) // , { [pageId]: block, ...children}, {[pageId]: page})
+  await resolvePage(pageId, p.blocks, p.pages)// { [pageId]: p.block, ...p.children}, {[pageId]: p.page})
 
   window.blockMap = result
-  blockMap.value = result
+  blockMap.value = p.blocks // result
 
 })
 </script>

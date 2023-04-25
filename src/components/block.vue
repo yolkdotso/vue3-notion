@@ -30,7 +30,7 @@ if (!availableType.includes(type.value)) console.warn(`${type.value.toUpperCase(
 </script>
 
 <template>
-  <div style="width: 100%" v-if="isType(['page', 'child_page'])">
+  <div style="width: 100%" v-if="isType(['page', 'child_page','link_to_page', 'child_database'])">
     <NotionPage class="notion-page-content" v-bind="pass">
       <slot />
     </NotionPage>

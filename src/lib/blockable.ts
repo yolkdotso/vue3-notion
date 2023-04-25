@@ -64,7 +64,28 @@ export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps
   const format = computed(() => {}) // block.value?.value.format)
   const properties = computed(() => {}) // block.value?.value.properties)
 
-  const icon = computed<EmojiObject | FileObject | null>(() => blockContent.value?.icon)
+  const icon = computed<EmojiObject | FileObject | null>(() => {
+
+    const blk = block.value
+    if (!blk) {
+      return null
+    }
+
+    if (blk.type === 'link_to_page') {
+
+      const typ = blk[blk.type].type
+      const childId = blk[blk.type][typ]
+
+      const child = useNotionBlock({
+        ...props,
+        contentId: childId,
+      })
+
+      return child?.block?.value?.icon
+    }
+
+    return blockContent.value?.icon
+  })
   const width = computed(() => format.value?.block_width)
 
   const title = computed(() => {
@@ -73,8 +94,20 @@ export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps
       return null
     }
 
-    if (blk.type === 'child_page') {
+    if (['child_page', 'child_database'].includes(blk.type)) {
       return blk[blk.type].title
+    }
+
+    if (blk.type === 'link_to_page') {
+      const typ = blk[blk.type].type
+      const childId = blk[blk.type][typ]
+
+      const child = useNotionBlock({
+        ...props,
+        contentId: childId,
+      })
+
+      return child?.title?.value
     }
 
     const text = blk[blk.type]?.text
