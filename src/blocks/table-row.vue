@@ -11,7 +11,8 @@ const {
   table_block_column_header: hasHeaderColumn,
   table_block_row_header: hasHeaderRow,
   table_block_column_order: columns,
-} = parent.value.value.format
+// @ts-ignore
+} = parent.value?.format
 
 const cell = (columnId: string) => {
   return properties.value[columnId]

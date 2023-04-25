@@ -22,7 +22,7 @@ export const defineNotionProps = {
   _block: { type: Object as PropType<ComputedRef<Block>>, required: false },
 }
 
-export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps>) => {
+export const useNotionBlock = <T extends Block = Block>(props: Readonly<NotionBlockProps>) => {
   const block = computed<T>(() => {
     const id = props.contentId || Object.keys(props.blockMap)[0]
     return props.blockMap[id] as T
@@ -47,22 +47,36 @@ export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps
   })
 
   const f = computed(() => {
-    return {}
-
-
     return {
-      block_aspect_ratio: block.value?.value?.format?.block_aspect_ratio,
-      block_height: block.value?.value?.format?.block_height || 1,
-      block_width: block.value?.value?.format?.block_width || 1,
-      block_color: block.value?.value?.format?.block_color,
-      bookmark_icon: block.value?.value?.format?.bookmark_icon,
-      bookmark_cover: block.value?.value?.format?.bookmark_cover,
-      display_source: block.value?.value?.format?.display_source,
+      block_aspect_ratio: 16 / 9,
+      block_height: 1,
+      block_width: 1,
+      block_color: null,
+      bookmark_icon: null,
+      bookmark_cover: null,
+      display_source: null,
     }
+
+    // return {
+    //   block_aspect_ratio: block.value?.value?.format?.block_aspect_ratio,
+    //   block_height: block.value?.value?.format?.block_height || 1,
+    //   block_width: block.value?.value?.format?.block_width || 1,
+    //   block_color: block.value?.value?.format?.block_color,
+    //   bookmark_icon: block.value?.value?.format?.bookmark_icon,
+    //   bookmark_cover: block.value?.value?.format?.bookmark_cover,
+    //   display_source: block.value?.value?.format?.display_source,
+    // }
   })
 
-  const format = computed(() => {}) // block.value?.value.format)
-  const properties = computed(() => {}) // block.value?.value.properties)
+  const format = computed(() => ({
+    page_cover_position: null,
+    page_cover: null,
+    page_full_width: null,
+    page_small_text: null,
+    block_full_width: null,
+    block_page_width: null,
+  })) // block.value?.value.format)
+  const properties = computed(() => blockContent.value) // block.value?.value.properties)
 
   const icon = computed<EmojiObject | FileObject | null>(() => {
 
@@ -74,19 +88,19 @@ export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps
     if (blk.type === 'link_to_page') {
 
       const typ = blk[blk.type].type
-      const childId = blk[blk.type][typ]
+      const childId = (blk[blk.type] as any )[typ] as string
 
       const child = useNotionBlock({
         ...props,
         contentId: childId,
-      })
+      }) as { block: ComputedRef<Block & { icon?: FileObject|EmojiObject }> }
 
       return child?.block?.value?.icon
     }
 
     return blockContent.value?.icon
   })
-  const width = computed(() => format.value?.block_width)
+  const width = computed(() => null) // format.value?.block_width)
 
   const title = computed(() => {
     const blk = block.value
@@ -95,27 +109,29 @@ export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps
     }
 
     if (['child_page', 'child_database'].includes(blk.type)) {
-      return blk[blk.type].title
+      // @ts-ignore
+      return blk[blk.type]?.title
     }
 
     if (blk.type === 'link_to_page') {
       const typ = blk[blk.type].type
-      const childId = blk[blk.type][typ]
+      const childId = (blk[blk.type] as any)[typ] as string
 
       const child = useNotionBlock({
         ...props,
         contentId: childId,
-      })
+      }) as { title?: ComputedRef<string> }
 
       return child?.title?.value
     }
 
+    // @ts-ignore
     const text = blk[blk.type]?.text
     return text ? { text } : text
   })
 
-  const caption = computed(() => properties.value?.caption)
-  const description = computed(() => properties.value?.description)
+  const caption = computed(() => null) // properties.value?.caption)
+  const description = computed(() => null) // properties.value?.description)
 
   const type = computed(() => {
     return block.value?.type
@@ -143,6 +159,7 @@ export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps
   const children = computed(() => {
     return Object.values(props.blockMap)
     .filter(
+      // @ts-ignore
       (blk) => blk.parent?.type === 'workspace' ? false : blk.parent?.[blk.parent?.type] === block.value?.id
     ).map(c => c.id)
   })
@@ -155,6 +172,7 @@ export const useNotionBlock = <T extends Block>(props: Readonly<NotionBlockProps
   }
 
   const blockContent = computed(() => {
+    // @ts-ignore
     const content = block.value[block.value.type]
     return content
   })

@@ -5,7 +5,7 @@ import { computed, PropType } from "vue"
 
 const props = defineProps({
   content: Object as PropType<string[] | string>,
-  decorators: Object as PropType<string[]>,
+  decorators: Object as PropType<(string|string[])[]>,
   ...defineNotionProps,
 })
 //@ts-ignore
@@ -24,10 +24,11 @@ const nextContent = computed(() => [text.value, unappliedDecorators.value])
 const isPageLink = computed(() => text.value === "‣")
 const isInlinePageLink = computed(() => decoratorValue.value?.[0] === "/")
 const pageLinkTitle = computed(
-  () => blockProps.blockMap?.[decoratorValue.value]?.value?.properties?.title?.[0]?.[0] || "link"
+  // todo
+  () => "link" // blockProps.blockMap?.[decoratorValue.value]?.value?.properties?.title?.[0]?.[0] || "link"
 )
 const target = computed(() => {
-  if (type.value === "page") {
+  if (type.value === "link_to_page") {
     return blockProps.pageLinkTarget
   }
   return blockProps.textLinkTarget

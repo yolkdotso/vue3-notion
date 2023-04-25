@@ -13,6 +13,7 @@ const siblings = computed(() => {
 
   return Object.values(props.blockMap)
     .filter(
+      // @ts-ignore
       (blk) => blk.parent?.type === 'workspace' ? false : blk.parent?.[blk.parent?.type] === parent.value?.id
     ).length
 })

@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { Block } from "@/lib/types"
+import { Block, Heading1Block, Heading2Block, Heading3Block } from "@/lib/types"
 import { useNotionBlock, defineNotionProps } from "@/lib/blockable"
 import NotionTableOfContentsItem from "@/blocks/helpers/table-of-contents-item.vue"
 import { computed } from "vue"
 
-type BlockLevel = Block & {
+type Header = (Heading1Block | Heading2Block | Heading3Block)
+type BlockLevel = Header & {
   level: number
 }
 
@@ -36,7 +37,7 @@ const headerObjects = computed(() => {
       }
 
       if (!haveAdded.has(value)) {
-        temp.push({ ...value, level })
+        temp.push({ ...value as Header, level })
         haveAdded.add(value)
       }
     }

@@ -11,6 +11,10 @@ const alt = computed(() => {
 
 const src = computed(() => {
   if (block.value.type === 'image') {
+    if (block.value.image.type === 'external') {
+      return block.value.image.external.url
+    }
+
     return block.value.image[block.value.image.type].url
   }
   return props.mapImageUrl(properties.value?.source[0][0], block.value)

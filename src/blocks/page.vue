@@ -19,12 +19,12 @@ const computedFont = computed(() => {
   return { fontFamily: "Lyon-Text, Georgia, ui-serif, serif" }
 
   // todo: can we get this?
-  let font = (block.value.value.format?.page_font as string) || ""
-  if (font == "serif") {
-    return { fontFamily: "Lyon-Text, Georgia, ui-serif, serif" }
-  } else if (font == "mono") {
-    return { fontFamily: "iawriter-mono, Nitti, Menlo, Courier, monospace" }
-  }
+  // let font = (block.value.value.format?.page_font as string) || ""
+  // if (font == "serif") {
+  //   return { fontFamily: "Lyon-Text, Georgia, ui-serif, serif" }
+  // } else if (font == "mono") {
+  //   return { fontFamily: "iawriter-mono, Nitti, Menlo, Courier, monospace" }
+  // }
 }) as StyleValue
 </script>
 

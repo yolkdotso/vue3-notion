@@ -2,7 +2,7 @@
 import Prism from "prismjs"
 import PrismBlock from "./helpers/prism.vue"
 import { useNotionBlock, defineNotionProps } from "@/lib/blockable"
-import { computed } from "vue"
+import { ComputedRef, computed } from "vue"
 
 import "prismjs/components/prism-markup-templating"
 import "prismjs/components/prism-markup"
@@ -37,10 +37,11 @@ import "prismjs/components/prism-stylus"
 import "prismjs/components/prism-swift"
 import "prismjs/components/prism-wasm"
 import "prismjs/components/prism-yaml"
+import { CodeBlock } from ".."
 
 const props = defineProps({ overrideLang: String, overrideLangClass: String, ...defineNotionProps })
 //@ts-ignore
-const { properties } = useNotionBlock(props)
+const { properties } = useNotionBlock(props) as {properties: ComputedRef<CodeBlock['code']>}
 const lang = computed(() => {
   return props.overrideLang || properties.value?.language?.[0]?.[0]?.toLowerCase()
 })
@@ -53,7 +54,7 @@ const supported = computed(() => {
   return lang.value ? Prism?.languages[lang.value] : false
 })
 
-const computedSlot = computed(() => properties.value?.title.map((i) => i?.[0]).join(""))
+const computedSlot = computed(() => properties.value?.caption.map((i) => i.plain_text).join(""))
 </script>
 
 <script lang="ts">

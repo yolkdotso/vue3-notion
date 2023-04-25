@@ -17,13 +17,13 @@ export default {
 <template>
   <div :class="[format?.page_cover && 'notion-page-icon-offset', big ? 'notion-page-icon-cover' : 'notion-page-icon']">
     <img
-      v-if="typeof icon == 'string' && icon.includes('http')"
+      v-if="icon?.type == 'file' && icon.file.url.includes('http') || icon?.type == 'external' && icon.external.url.includes('http')"
       :src="props.mapImageUrl(icon, block)"
       :alt="title ? getTextContent(title) : 'Icon'"
       class="notion-page-icon"
     />
-    <span v-else-if="icon" role="img" :aria-label="icon" class="notion-page-icon">
-      {{ icon[icon.type] }}
+    <span v-else-if="icon?.type == 'emoji'" role="img" :aria-label="icon.emoji" class="notion-page-icon">
+      {{ icon.emoji }}
     </span>
     <DefaultPageIcon class="notion-page-icon" v-else-if="!big"></DefaultPageIcon>
   </div>

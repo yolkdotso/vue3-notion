@@ -14,6 +14,7 @@ const start = computed(() => {
     ? getListNumber(block.value.id, props.blockMap)
     : 0
 })
+// @ts-ignore
 const isTopLevel = computed(() => type.value != props.blockMap?.[block.value.parent[block.value.parent.type]].type)
 </script>
 

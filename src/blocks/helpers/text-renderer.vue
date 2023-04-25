@@ -2,9 +2,10 @@
 import { useNotionBlock, defineNotionProps } from "@/lib/blockable"
 import { RichTextObject } from "@/lib/types"
 import NotionDecorator from "@/blocks/decorator.vue"
-import { PropType } from "vue"
+import { PropType, computed } from "vue"
 
-const props = defineProps({ text: Object as PropType<RichTextObject | String>, ...defineNotionProps })
+type TextType = RichTextObject[] | String | {text: RichTextObject[]}
+const props = defineProps({ text: Object as PropType<TextType>, ...defineNotionProps })
 //@ts-ignore
 const { pass, format } = useNotionBlock(props)
 
@@ -37,6 +38,32 @@ const decorators = (text: RichTextObject) => {
 
   return decorators
 }
+
+const _text = computed(() => {
+  let text = props.text
+  if (typeof text === 'undefined') {
+    return
+  }
+
+  if (typeof text === 'string') {
+    return
+  }
+
+  text = text as Exclude<TextType, String>
+
+  const _t = (Array.isArray(text) ? text : text.text) as RichTextObject[]
+  const res = _t.map(t => {
+    if (t.type == 'text') {
+      return { text: t.text.content, orig: t}
+    }
+    if (t.type == 'equation') {
+      return { text: t.equation.expression, orig: t}
+    }
+    return null
+  }).filter(x => x !== null)
+
+  return res as { text: string, orig: RichTextObject }[]
+})
 </script>
 
 <script lang="ts">
@@ -47,17 +74,17 @@ export default {
 
 <template>
   <span>
-    <NotionDecorator v-for="(t, i) in text" :key="i" :content="t" v-bind="pass" v-if="false" />
+    <!-- <NotionDecorator v-for="(t, i) in text" :key="i" :content="t" v-bind="pass" v-if="false" /> -->
 
     <template v-if="typeof text === 'string'">
       {{ text }}
     </template>
     <NotionDecorator
-    v-else
-      v-for="(t, i) in text.text"
+      v-else-if="_text"
+      v-for="(t, i) in _text"
       :key="i"
-      :content="[t.text?.content ?? t.text]"
-      :decorators="decorators(t)"
+      :content="[t.text]"
+      :decorators="decorators(t.orig)"
       v-bind="pass"
     />
   </span>

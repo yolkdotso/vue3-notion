@@ -8,7 +8,8 @@ const props = defineProps({ ...defineNotionProps })
 const { block, pass } = useNotionBlock(props)
 
 const referencePointerId = computed(
-  () => (block.value.value.format?.transclusion_reference_pointer?.id as string) ?? ""
+  // @ts-ignore
+  () => (block.value.format?.transclusion_reference_pointer?.id as string) ?? ""
 )
 </script>
 

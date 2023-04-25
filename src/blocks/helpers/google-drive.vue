@@ -7,13 +7,14 @@ const props = defineProps({ ...defineNotionProps })
 //@ts-ignore
 const { format, block, hasPageLinkOptions, pageLinkProps } = useNotionBlock(props)
 
+// @ts-ignore
 const properties = computed(() => format.value.drive_properties)
 
 const constructThumbnail = (src?: string) => {
   if (!src) return
   const q = new URLSearchParams({
     table: "block",
-    id: block.value.value.id,
+    id: block.value.id,
     cache: "v2",
   })
   return "https://www.notion.so/image/" + encodeURIComponent(src) + "?" + q
