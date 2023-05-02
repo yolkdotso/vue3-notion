@@ -48,7 +48,7 @@ export const useNotionBlock = <T extends Block = Block>(props: Readonly<NotionBl
 
   const f = computed(() => {
     return {
-      block_aspect_ratio: 16 / 9,
+      block_aspect_ratio: null,
       block_height: 1,
       block_width: 1,
       block_color: null,

@@ -13,7 +13,7 @@ const src = computed(() => {
 const aspectRatioStyle = computed(() => {
   let aspectRatio =
     f.value.block_width == 1 || f.value.block_height == 1
-      ? 1 / f.value.block_aspect_ratio
+      ? 1 / (f.value.block_aspect_ratio ?? 0)
       : `${f.value.block_width} / ${f.value.block_height} `
 
   return {
