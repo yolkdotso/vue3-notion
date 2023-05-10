@@ -19,9 +19,9 @@ const content = computed(() => {
   }
 })
 const computedText = computed(() => (content.value ? content.value.map((i) => i.plain_text).join("") : ""))
-const computedStyle = computed(() => ({
+const computedStyle = computed<StyleValue>(() => ({
   paddingLeft: 1.5 * props.level + "rem",
-})) as StyleValue
+}))
 </script>
 
 <script lang="ts">

@@ -15,7 +15,7 @@ export default {
 </script>
 
 <template>
-  <ul v-if="type === 'bulleted_list'" class="notion-list notion-list-disc">
+  <ul v-if="type === 'bulleted_list_item'" class="notion-list notion-list-disc">
     <slot />
   </ul>
   <ol v-else class="notion-list notion-list-numbered">

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useNotionBlock, defineNotionProps } from "@/lib/blockable"
-import NotionPageHeader from "@/blocks/helpers/page-header.vue"
+// import NotionPageHeader from "@/blocks/helpers/page-header.vue"
 import NotionPageIcon from "@/blocks/helpers/page-icon.vue"
 import NotionTextRenderer from "@/blocks/helpers/text-renderer.vue"
 import { computed, StyleValue } from "vue"
@@ -14,7 +14,7 @@ const coverStyle = computed(() => {
   const coverPosition = (1 - (format.value.page_cover_position || 0.5)) * 100
   return { objectPosition: `center ${coverPosition}%` }
 })
-const computedFont = computed(() => {
+const computedFont = computed<StyleValue>(() => {
 
   return { fontFamily: "Lyon-Text, Georgia, ui-serif, serif" }
 
@@ -25,7 +25,7 @@ const computedFont = computed(() => {
   // } else if (font == "mono") {
   //   return { fontFamily: "iawriter-mono, Nitti, Menlo, Courier, monospace" }
   // }
-}) as StyleValue
+})
 </script>
 
 <script lang="ts">
