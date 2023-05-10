@@ -1,6 +1,6 @@
 {
   "name": "@yolkdotso/vue3-notion",
-  "version": "0.2.0-beta.2",
+  "version": "0.2.0-beta.3",
   "description": "Vue 3 Unofficial Notion Renderer",
   "repository": {
     "type": "git",
